@@ -73,8 +73,10 @@ public:
     , m_subscribeCmdVel()
     , m_subscribeExternalPosition()
     , m_pubImu()
+    , m_pubImu2()
     , m_pubTemp()
     , m_pubMag()
+    , m_pubMag2()
     , m_pubPressure()
     , m_pubBattery()
     , m_pubRssi()
@@ -88,12 +90,14 @@ public:
 
     if (m_enable_logging_imu) {
       m_pubImu = n.advertise<sensor_msgs::Imu>(tf_prefix + "/imu", 10);
+      m_pubImu2 = n.advertise<sensor_msgs::Imu>("imu/data_raw", 10); 
     }
     if (m_enable_logging_temperature) {
       m_pubTemp = n.advertise<sensor_msgs::Temperature>(tf_prefix + "/temperature", 10);
     }
     if (m_enable_logging_magnetic_field) {
       m_pubMag = n.advertise<sensor_msgs::MagneticField>(tf_prefix + "/magnetic_field", 10);
+      m_pubMag2 = n.advertise<sensor_msgs::MagneticField>("imu/mag", 10);
     }
     if (m_enable_logging_pressure) {
       m_pubPressure = n.advertise<std_msgs::Float32>(tf_prefix + "/pressure", 10);
@@ -443,6 +447,7 @@ private:
       msg.linear_acceleration.z = data->acc_z * 9.81;
 
       m_pubImu.publish(msg);
+      m_pubImu2.publish(msg);
     }
   }
 
@@ -475,6 +480,7 @@ private:
       msg.magnetic_field.y = data->mag_y;
       msg.magnetic_field.z = data->mag_z;
       m_pubMag.publish(msg);
+      m_pubMag2.publish(msg);
     }
 
     if (m_enable_logging_pressure) {
@@ -543,8 +549,10 @@ private:
   ros::Subscriber m_subscribeCmdVel;
   ros::Subscriber m_subscribeExternalPosition;
   ros::Publisher m_pubImu;
+  ros::Publisher m_pubImu2;
   ros::Publisher m_pubTemp;
   ros::Publisher m_pubMag;
+  ros::Publisher m_pubMag2;
   ros::Publisher m_pubPressure;
   ros::Publisher m_pubBattery;
   ros::Publisher m_pubPackets;
